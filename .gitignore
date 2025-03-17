@@ -1,0 +1,66 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+main
+
+# Go specific
+/vendor/
+/Godeps/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Temporary files
+tmp/
+temp/
+
+# Log files
+*.log
+logs/
+
+# Build artifacts
+/bin/
+/dist/
+/build/
+
+# Docker volumes
+/data/
+
+# Test coverage
+coverage.txt
+coverage.html
+
+# Local database
+*.db
+*.sqlite
+
+# Air hot reload configuration
+.air.toml
+tmp/
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Dependency directories (remove the comment below if you wish to check in your lock file)
+# go.sum
+
+# Security-related files
+*.pem
+*.key
