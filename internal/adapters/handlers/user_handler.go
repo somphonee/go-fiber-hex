@@ -1,12 +1,11 @@
 package handlers
 
 import (
-	"net/http"
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"github.com/somphonee/go-fiber-hex/internal/core/domain"
 	"github.com/somphonee/go-fiber-hex/internal/core/ports"
-	"github.com/somphonee/go-fiber-hex/pkg/errors"
+	"github.com/somphonee/go-fiber-hex/pkg/response"
 
 )
 
@@ -22,20 +21,47 @@ func NewUserHandler(userService ports.UserService) *UserHandler {
 		validator:   validator.New(),
 	}
 }
+
+// Add this function to your handler struct
+func (h *UserHandler) translateErrors(err error) map[string]string {
+	result := make(map[string]string)
+	
+	if errors, ok := err.(validator.ValidationErrors); ok {
+			for _, err := range errors {
+					field := err.Field()
+					switch err.Tag() {
+					case "required":
+							result[field] = field + " is required"
+					case "email":
+							result[field] = field + " should be a valid email"
+					// Add more cases as needed
+					default:
+							result[field] = field + " is invalid"
+					}
+			}
+	}
+	
+	return result
+}
 func (h *UserHandler) Create(c *fiber.Ctx) error {
 	req := new(domain.CreateUserRequest)
 	if err := c.BodyParser(req); err != nil {
-		return c.Status(http.StatusBadRequest).JSON(errors.NewError("invalid request", err))
+			return response.SendError(c, fiber.StatusBadRequest, "Invalid request body", err.Error())
 	}
 
+	// Validate request
 	if err := h.validator.Struct(req); err != nil {
-		return c.Status(http.StatusBadRequest).JSON(errors.NewValidationError(err))
-	}
+    var validationErrors []string
+    for _, err := range err.(validator.ValidationErrors) {
+        validationErrors = append(validationErrors, err.Field() + ": " + err.Tag())
+    }
+    return response.SendError(c, fiber.StatusBadRequest, "Validation failed", validationErrors)
+}
 
-	user, err := h.userService.Create(c.Context(), req)
+  err := h.userService.Create(c.Context(), req)
 	if err != nil {
-		return c.Status(http.StatusInternalServerError).JSON(errors.NewError("failed to create user", err))
+			return response.SendError(c, fiber.StatusInternalServerError, "Failed to create user", err.Error())
 	}
 
-	return c.Status(http.StatusCreated).JSON(user)
+	return response.SendCreated(c, "ok", "User created successfully")
 }

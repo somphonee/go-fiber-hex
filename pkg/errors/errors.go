@@ -43,3 +43,4 @@ func NewValidationError(err error) *Error {
 	}
 	return NewError("Validation failed", err)
 }
+

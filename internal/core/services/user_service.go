@@ -18,22 +18,22 @@ func NewUserService(userRepo ports.UserRepository) ports.UserService {
 		userRepo: userRepo,
 	}
 }
-func (s *userService) Create(ctx context.Context, req *domain.CreateUserRequest) (*domain.UserResponse, error) {
+func (s *userService) Create(ctx context.Context, req *domain.CreateUserRequest) error {
 
 	exitstingByEmail, _ := s.userRepo.GetByEmail(ctx, req.Email)
 	if exitstingByEmail != nil {
-		return nil, errors.New("email already exists")
+		return errors.New("email already exists")
 	}
 
 	existingByUserName, _ := s.userRepo.GetByUserName(ctx, req.Username)
 	if existingByUserName != nil {
-		return nil, errors.New("username already exists")
+		return errors.New("username already exists")
 	}
 
 	// Hash password
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 	if err != nil {
-		return nil, err
+		return  err
 	}
 
 	user := &domain.User{
@@ -43,14 +43,8 @@ func (s *userService) Create(ctx context.Context, req *domain.CreateUserRequest)
 	}
 
 	if err := s.userRepo.Create(ctx, user); err != nil {
-		return nil, err
+		return  err
 	}
-
-	return &domain.UserResponse{
-		ID:        user.ID,
-		Username:  user.Username,
-		Email:     user.Email,
-		CreatedAt: user.CreatedAt,
-		UpdatedAt: user.UpdatedAt,
-	}, nil
+	return nil
 }
+

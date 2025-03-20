@@ -114,3 +114,12 @@ func (cv *CustomValidator) GetValidator() *validator.Validate {
 func (cv *CustomValidator) RegisterCustomValidation(tag string, fn validator.Func) error {
 	return cv.validator.RegisterValidation(tag, fn)
 }
+func TranslateErrors(errs validator.ValidationErrors) map[string]string {
+	validationErrors := make(map[string]string)
+	for _, err := range errs {
+		validationErrors[err.Field()] = err.Tag()
+	}
+	return validationErrors
+}
+
+
