@@ -48,3 +48,21 @@ func (s *userService) Create(ctx context.Context, req *domain.CreateUserRequest)
 	return nil
 }
 
+func (s *userService) GetByID(ctx context.Context, id uint) (*domain.UserResponse, error) {
+	user, err := s.userRepo.GetByID(ctx, id)
+	if err != nil {
+		return nil, err
+	}
+	
+	return &domain.UserResponse{
+		ID:       user.ID,
+		Username: user.Username,
+		Email:    user.Email,
+		CreatedAt: user.CreatedAt,
+		UpdatedAt: user.UpdatedAt,
+	}, nil
+}
+
+
+
+

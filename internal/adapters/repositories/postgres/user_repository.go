@@ -19,7 +19,6 @@ func NewUserRepository(db *gorm.DB) ports.UserRepository {
 	}
 }
 
-
 func (r *userRepository) Create(ctx context.Context, user *domain.User) error {
 	return r.db.WithContext(ctx).Create(user).Error
 }

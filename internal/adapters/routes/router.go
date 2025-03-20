@@ -21,6 +21,7 @@ func SetupRoutes(app *fiber.App, userHandler *handlers.UserHandler) {
 	// User routes
 	users := v1.Group("/users")
 	users.Post("/", userHandler.Create)
+	users.Get("/:id", userHandler.GetByID)
 
 	// Health check
 	app.Get("/health", func(c *fiber.Ctx) error {
